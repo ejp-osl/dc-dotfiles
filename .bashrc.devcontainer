@@ -1,0 +1,80 @@
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+PS1='[\u@\h \W]\$ '
+
+############################
+# Prompt configuration
+############################
+
+# --- Colors (safe for Bash prompts) ---
+RESET="\[\e[0m\]"
+BOLD="\[\e[1m\]"
+
+BLACK="\[\e[30m\]"
+RED="\[\e[31m\]"
+GREEN="\[\e[32m\]"
+YELLOW="\[\e[33m\]"
+BLUE="\[\e[34m\]"
+MAGENTA="\[\e[35m\]"
+CYAN="\[\e[36m\]"
+WHITE="\[\e[37m\]"
+
+CYAN_BG="\[\e[46m\]"
+
+# Powerline separators (need a Nerd/Powerline font)
+PL_LEFT=$''
+PL_RIGHT=$''
+
+# --- Helper: Git branch (only if inside repo) ---
+__git_branch() {
+    command -v git >/dev/null 2>&1 || return
+    git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
+
+    local branch
+    branch=$(git symbolic-ref --short HEAD 2>/dev/null \
+          || git describe --tags --exact-match 2>/dev/null \
+          || git rev-parse --short HEAD 2>/dev/null)
+
+    [[ -n "$branch" ]] && echo " ($branch)"
+}
+
+# --- Helper: Python virtualenv ---
+__virtualenv() {
+    [[ -n "$VIRTUAL_ENV" ]] || return
+    echo " ($(basename "$VIRTUAL_ENV"))"
+}
+
+# --- Build the prompt ---
+__set_prompt() {
+    local exit_code=$?
+
+    PS1=""
+    PS1+="${CYAN}${PL_LEFT}${BOLD}${CYAN_BG}${BLACK}\u@\h${RESET}${CYAN}${PL_RIGHT}${RESET}"  # user@host badge (cyan bg)
+    PS1+="${BOLD}${BLUE}\w${RESET}"                # current dir
+    PS1+="${YELLOW}$(__git_branch)${RESET}"        # git branch
+    PS1+="${MAGENTA}$(__virtualenv)${RESET}"       # venv
+	PS1+=" "
+#    PS1+="\n"
+
+    # Prompt symbol changes color if last command failed
+    if [[ $exit_code -eq 0 ]]; then
+        PS1+="${BOLD}${CYAN}❯ ${RESET}"
+    else
+        PS1+="${BOLD}${RED}❯ ${RESET}"
+    fi
+}
+
+PROMPT_COMMAND="__set_prompt"
+
+export PATH="$HOME/.local/bin:$PATH"
+export EDITOR=vim
+export VISUAL=vim
+
+source $HOME/.bash_aliases
+source $HOME/.bash_functions
+

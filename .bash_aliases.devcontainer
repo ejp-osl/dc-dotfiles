@@ -1,0 +1,18 @@
+alias vim='nvim'
+alias bashrc='vim ~/.bashrc'
+alias bashsrc='source ~/.bashrc'
+alias balias='vim ~/.bash_aliases'
+alias bashfn='vim ~/.bash_functions'
+alias nv='nvim'
+alias gi='git'
+alias python='python3'
+alias vimrc='vim ~/.vimrc'
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias l='ls -la --color --group-directories-first'
+
+
+alias cddl='cdd && l'
+alias copy='xclip -sel clip'
+alias paste='xclip -o -sel clip'
+alias nvconf='cd ~/.config/nvim && nvim .'
